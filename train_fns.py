@@ -129,6 +129,8 @@ def save_and_sample(G, D, G_ema, z_, y_, fixed_z, fixed_y,
                                                   experiment_name,
                                                   state_dict['itr'])
   print("saved image shape: ", fixed_Gz.shape)
+  print(fixed_y)
+  print(fixed_z)
   print(fixed_Gz)
   print(fixed_Gz.float())
   torchvision.utils.save_image(fixed_Gz.float().cpu(), image_filename,
