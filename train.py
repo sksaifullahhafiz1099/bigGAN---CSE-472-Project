@@ -23,7 +23,6 @@ from torch.nn import Parameter as P
 import torchvision
 
 # Import my stuff
-import inception_utils
 import utils
 import losses
 import train_fns
@@ -133,9 +132,6 @@ def run(config):
   loaders = utils.get_data_loaders(**{**config, 'batch_size': D_batch_size,
                                       'start_itr': state_dict['itr']})
 
-  # Prepare inception metrics: FID and IS
-  get_inception_metrics = inception_utils.prepare_inception_metrics(config['dataset'], config['parallel'], config['no_fid'])
-
   # Prepare noise and randomly sampled label arrays
   # Allow for different batch sizes in G
   G_batch_size = max(config['G_batch_size'], config['batch_size'])
@@ -154,11 +150,7 @@ def run(config):
   # Else, assume debugging and use the dummy train fn
   else:
     train = train_fns.dummy_training_function()
-  # Prepare Sample function for use with inception metrics
-  sample = functools.partial(utils.sample,
-                              G=(G_ema if config['ema'] and config['use_ema']
-                                 else G),
-                              z_=z_, y_=y_, config=config)
+  
 
   print('Beginning training at epoch %d...' % state_dict['epoch'])
   # Train for specified number of epochs, although we mostly track G iterations.
@@ -205,13 +197,6 @@ def run(config):
         train_fns.save_and_sample(G, D, G_ema, z_, y_, fixed_z, fixed_y, 
                                   state_dict, config, experiment_name)
 
-      # Test every specified interval
-      if not (state_dict['itr'] % config['test_every']):
-        if config['G_eval_mode']:
-          print('Switchin G to eval mode...')
-          G.eval()
-        train_fns.test(G, D, G_ema, z_, y_, state_dict, config, sample,
-                       get_inception_metrics, experiment_name, test_log)
     # Increment epoch counter at end of epoch
     state_dict['epoch'] += 1
 
