@@ -83,7 +83,6 @@ def GAN_training_function(G, D, GD, z_, y_, ema, state_dict, config):
     # If we have an ema, update it, regardless of if we test with it or not
     if config['ema']:
       ema.update(state_dict['itr'])
-    print("G_loss: ", G_loss)
     out = {'G_loss': float(G_loss.item()), 
             'D_loss_real': float(D_loss_real.item()),
             'D_loss_fake': float(D_loss_fake.item())}
@@ -130,7 +129,7 @@ def save_and_sample(G, D, G_ema, z_, y_, fixed_z, fixed_y,
                                                   state_dict['itr'])
   print("saved image shape: ", fixed_Gz.shape)
   # print(fixed_y)
-  # print(fixed_z)
+  print(type(fixed_z))
   print(type(fixed_Gz))
   # print(fixed_Gz.float())
   torchvision.utils.save_image(fixed_Gz.float().cpu(), image_filename,

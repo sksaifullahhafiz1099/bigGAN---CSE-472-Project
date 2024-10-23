@@ -417,7 +417,6 @@ class G_D(nn.Module):
     with torch.set_grad_enabled(train_G):
       # Get Generator output given noise
       G_z = self.G(z, self.G.shared(gy))
-      print("G_z type: ", type(G_z))
       # Cast as necessary
       if self.G.fp16 and not self.D.fp16:
         G_z = G_z.float()
