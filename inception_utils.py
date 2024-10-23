@@ -260,7 +260,10 @@ def accumulate_inception_activations(sample, net, num_inception_images=50000):
 # Load and wrap the Inception model
 def load_inception_net(parallel=False):
   inception_model = inception_v3(pretrained=True, transform_input=False)
-  inception_model = WrapInception(inception_model.eval()).cuda()
+  if torch.cuda.is_available():
+    inception_model = WrapInception(inception_model.eval()).cuda()
+  else:
+    inception_model = WrapInception(inception_model.eval())
   if parallel:
     print('Parallelizing Inception module...')
     inception_model = nn.DataParallel(inception_model)
