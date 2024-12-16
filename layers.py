@@ -54,7 +54,7 @@ def power_iteration(W, u_, update=True, eps=1e-12):
 class identity(nn.Module):
   def forward(self, input):
     return input
- 
+ Attention
 
 # Spectral normalization base class 
 class SN(object):
@@ -138,18 +138,15 @@ class SNEmbedding(nn.Embedding, SN):
     return F.embedding(x, self.W_())
 
 
-# A non-local block as used in SA-GAN
-# Note that the implementation as described in the paper is largely incorrect;
-# refer to the released code for the actual implementation.
 class Attention(nn.Module):
   def __init__(self, ch, which_conv=SNConv2d, name='attention'):
     super(Attention, self).__init__()
     # Channel multiplier
     self.ch = ch
     self.which_conv = which_conv
-    self.theta = self.which_conv(self.ch, self.ch // 8, kernel_size=1, padding=0, bias=False)
-    self.phi = self.which_conv(self.ch, self.ch // 8, kernel_size=1, padding=0, bias=False)
-    self.g = self.which_conv(self.ch, self.ch // 2, kernel_size=1, padding=0, bias=False)
+    self.theta = self.which_conv(self.ch, self.ch // 8, kernel_size=1, padding=0, bias=False) #!query
+    self.phi = self.which_conv(self.ch, self.ch // 8, kernel_size=1, padding=0, bias=False) #!key
+    self.g = self.which_conv(self.ch, self.ch // 2, kernel_size=1, padding=0, bias=False) #!value
     self.o = self.which_conv(self.ch // 2, self.ch, kernel_size=1, padding=0, bias=False)
     # Learnable gain parameter
     self.gamma = P(torch.tensor(0.), requires_grad=True)
